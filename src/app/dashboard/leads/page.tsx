@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import { use } from 'react';
 import { format, subDays } from 'date-fns';
 import { FaSearch, FaFilter, FaUserPlus, FaPhone, FaEnvelope, FaEllipsisH, FaStar, FaRegStar, FaChartLine, FaTemperatureHigh, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
 
@@ -42,8 +41,7 @@ interface Lead {
 
 function LeadsContent() {
   const { data: session } = useSession();
-  const rawSearchParams = useSearchParams();
-  const searchParams = use(rawSearchParams);
+  const searchParams = useSearchParams();
   
   const [leads, setLeads] = useState<Lead[]>([]);
   const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
