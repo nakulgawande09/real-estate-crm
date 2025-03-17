@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
@@ -17,6 +17,8 @@ import {
 } from 'react-icons/fa';
 import Link from 'next/link';
 import { PropertyType, ProjectStatus } from '@/lib/enums';
+
+export const runtime = 'edge';
 
 // Define the validation schema using Zod
 const projectSchema = z.object({
@@ -54,9 +56,10 @@ const projectSchema = z.object({
   notes: z.string().optional(),
 });
 
-type ProjectFormData = z.infer<typeof projectSchema>;
+// Define the form input type based on the schema
+type ProjectFormInput = z.infer<typeof projectSchema>;
 
-export default function CreateProjectPage() {
+function CreateProjectContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,7 +71,7 @@ export default function CreateProjectPage() {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<ProjectFormData>({
+  } = useForm<ProjectFormInput>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       name: '',
@@ -114,7 +117,7 @@ export default function CreateProjectPage() {
   const fundingGap = totalBudget - totalFunding;
 
   // Handle form submission
-  const onSubmit: SubmitHandler<ProjectFormData> = async (data) => {
+  const onSubmit: SubmitHandler<ProjectFormInput> = async (data) => {
     if (status !== 'authenticated') {
       setServerError('You must be logged in to create a project');
       return;
@@ -705,5 +708,13 @@ export default function CreateProjectPage() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function CreateProjectPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+      <CreateProjectContent />
+    </Suspense>
   );
 } 

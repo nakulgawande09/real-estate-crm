@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
+import { use } from 'react';
 import { format, isAfter, isBefore, isToday, addDays } from 'date-fns';
 import { FaSearch, FaPlus, FaCheckCircle, FaClock, FaExclamationCircle, FaTrash, FaPencilAlt, FaUser, FaTimes, FaFilter, FaSort } from 'react-icons/fa';
+
+export const runtime = 'edge';
 
 interface TaskUser {
   id: string;
@@ -32,8 +36,10 @@ interface Task {
   tags: string[];
 }
 
-export default function TasksPage() {
+function TasksContent() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
@@ -673,5 +679,13 @@ export default function TasksPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function TasksPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+      <TasksContent />
+    </Suspense>
   );
 } 

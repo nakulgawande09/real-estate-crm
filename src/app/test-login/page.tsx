@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 
+export const runtime = 'edge';
+
 export default function TestLoginPage() {
   const [email, setEmail] = useState('demo@realestatecrm.com');
   const [password, setPassword] = useState('demo123456');

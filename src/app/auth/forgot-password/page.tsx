@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { FaEnvelope, FaArrowLeft } from 'react-icons/fa';
 
+export const runtime = 'edge';
+
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -62,12 +64,14 @@ export default function ForgotPassword() {
             <div className="bg-green-50 text-green-700 p-4 rounded-md text-center">
               {success}
             </div>
-            <Link
-              href="/auth/signin"
-              className="w-full flex justify-center items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <FaArrowLeft className="mr-2" /> Back to sign in
-            </Link>
+            <div className="w-full flex justify-center">
+              <Link
+                href="/auth/signin"
+                className="w-full inline-flex justify-center items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <FaArrowLeft className="mr-2" /> Back to sign in
+              </Link>
+            </div>
           </div>
         ) : (
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -108,12 +112,14 @@ export default function ForgotPassword() {
                 {isLoading ? 'Sending...' : 'Send reset link'}
               </button>
               
-              <Link
-                href="/auth/signin"
-                className="w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Back to sign in
-              </Link>
+              <div className="w-full flex justify-center">
+                <Link
+                  href="/auth/signin"
+                  className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Back to sign in
+                </Link>
+              </div>
             </div>
           </form>
         )}

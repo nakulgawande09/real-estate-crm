@@ -5,6 +5,8 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+export const runtime = 'edge';
+
 export default function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -68,9 +70,11 @@ export default function Register() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Or{' '}
-            <Link href="/auth/signin" className="font-medium text-indigo-600 hover:text-indigo-500">
-              sign in to your existing account
-            </Link>
+            <span className="inline-block">
+              <Link href="/auth/signin" className="font-medium text-indigo-600 hover:text-indigo-500">
+                sign in to your existing account
+              </Link>
+            </span>
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

@@ -4,9 +4,13 @@ import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { FaExclamationTriangle, FaArrowLeft } from 'react-icons/fa';
+import { use } from 'react';
+
+export const runtime = 'edge';
 
 function AuthErrorContent() {
-  const searchParams = useSearchParams();
+  const rawSearchParams = useSearchParams();
+  const searchParams = use(rawSearchParams);
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
@@ -73,13 +77,15 @@ function AuthErrorContent() {
         </div>
         <div className="mt-8 space-y-6">
           <div className="flex justify-center">
-            <Link
-              href="/login"
-              className="group relative flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <FaArrowLeft className="mr-2 h-5 w-5" />
-              Back to Login
-            </Link>
+            <div className="inline-block">
+              <Link
+                href="/auth/signin"
+                className="group relative inline-flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <FaArrowLeft className="mr-2 h-5 w-5" />
+                Back to Login
+              </Link>
+            </div>
           </div>
         </div>
       </div>

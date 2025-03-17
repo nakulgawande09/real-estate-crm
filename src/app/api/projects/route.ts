@@ -15,13 +15,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
-    // Get query parameters
+    // Get query parameters safely
     const searchParams = request.nextUrl.searchParams;
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
-    const status = searchParams.get('status');
-    const propertyType = searchParams.get('propertyType');
-    const search = searchParams.get('search');
+    const page = parseInt(searchParams.get('page') || '1', 10) || 1;
+    const limit = parseInt(searchParams.get('limit') || '10', 10) || 10;
+    const status = searchParams.get('status') || '';
+    const propertyType = searchParams.get('propertyType') || '';
+    const search = searchParams.get('search') || '';
     
     if (USE_MOCK_DATA) {
       // Filter projects based on query parameters

@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
+import { use } from 'react';
 import { format, subDays } from 'date-fns';
 import { FaSearch, FaFilter, FaHome, FaBuilding, FaPlusCircle, FaMapMarkerAlt, FaBed, FaBath, FaRulerCombined, FaCalendarAlt, FaTag, FaSortAmountDown, FaSortAmountUp, FaChartLine, FaEye, FaEdit, FaTrashAlt } from 'react-icons/fa';
+
+export const runtime = 'edge';
 
 interface PropertyAddress {
   street: string;
@@ -45,15 +49,17 @@ interface Property {
   tags: string[];
 }
 
-export default function PropertiesPage() {
+function PropertiesContent() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [priceRangeFilter, setPriceRangeFilter] = useState('');
+  const [priceRangeFilter, setPriceRangeFilter] = useState<{min: number, max: number}>({min: 0, max: 1000000});
   const [sortField, setSortField] = useState<'price' | 'createdAt'>('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
@@ -394,10 +400,9 @@ export default function PropertiesPage() {
     }
     
     // Apply price range filter
-    if (priceRangeFilter) {
-      const [min, max] = priceRangeFilter.split('-').map(Number);
+    if (priceRangeFilter.min && priceRangeFilter.max) {
       result = result.filter(property => 
-        property.price >= min && (max ? property.price <= max : true)
+        property.price >= priceRangeFilter.min && (priceRangeFilter.max ? property.price <= priceRangeFilter.max : true)
       );
     }
     
@@ -567,15 +572,27 @@ export default function PropertiesPage() {
 
           <select
             className="w-full md:w-48 pl-4 pr-8 py-2 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            value={priceRangeFilter}
-            onChange={(e) => setPriceRangeFilter(e.target.value)}
+            value={priceRangeFilter.min.toString()}
+            onChange={(e) => setPriceRangeFilter({...priceRangeFilter, min: Number(e.target.value)})}
           >
-            <option value="">All Prices</option>
-            <option value="0-500000">Under $500K</option>
-            <option value="500000-1000000">$500K - $1M</option>
-            <option value="1000000-2000000">$1M - $2M</option>
-            <option value="2000000-5000000">$2M - $5M</option>
-            <option value="5000000-">$5M+</option>
+            <option value="">Min Price</option>
+            <option value="0">No Min</option>
+            <option value="500000">$500K</option>
+            <option value="1000000">$1M</option>
+            <option value="2000000">$2M</option>
+            <option value="5000000">$5M</option>
+          </select>
+
+          <select
+            className="w-full md:w-48 pl-4 pr-8 py-2 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            value={priceRangeFilter.max.toString()}
+            onChange={(e) => setPriceRangeFilter({...priceRangeFilter, max: Number(e.target.value)})}
+          >
+            <option value="">Max Price</option>
+            <option value="1000000">$1M</option>
+            <option value="2000000">$2M</option>
+            <option value="5000000">$5M</option>
+            <option value="10000000">No Max</option>
           </select>
         </div>
       </div>
@@ -672,5 +689,13 @@ export default function PropertiesPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function PropertiesPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+      <PropertiesContent />
+    </Suspense>
   );
 } 

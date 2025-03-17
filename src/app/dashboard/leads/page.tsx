@@ -1,9 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
+import { use } from 'react';
 import { format, subDays } from 'date-fns';
 import { FaSearch, FaFilter, FaUserPlus, FaPhone, FaEnvelope, FaEllipsisH, FaStar, FaRegStar, FaChartLine, FaTemperatureHigh, FaSortAmountDown, FaSortAmountUp } from 'react-icons/fa';
+
+export const runtime = 'edge';
 
 interface Lead {
   id: string;
@@ -36,8 +40,11 @@ interface Lead {
   tags: string[];
 }
 
-export default function LeadsPage() {
+function LeadsContent() {
   const { data: session } = useSession();
+  const rawSearchParams = useSearchParams();
+  const searchParams = use(rawSearchParams);
+  
   const [leads, setLeads] = useState<Lead[]>([]);
   const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
@@ -698,5 +705,13 @@ export default function LeadsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LeadsPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+      <LeadsContent />
+    </Suspense>
   );
 } 

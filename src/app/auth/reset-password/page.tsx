@@ -4,6 +4,9 @@ import { useState, FormEvent, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { FaLock, FaArrowLeft } from 'react-icons/fa';
+import { use } from 'react';
+
+export const runtime = 'edge';
 
 function ResetPasswordForm() {
   const [password, setPassword] = useState('');
@@ -14,7 +17,8 @@ function ResetPasswordForm() {
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
   
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const rawSearchParams = useSearchParams();
+  const searchParams = use(rawSearchParams);
   const token = searchParams.get('token');
 
   useEffect(() => {
@@ -116,12 +120,14 @@ function ResetPasswordForm() {
             <div className="bg-red-50 text-red-700 p-4 rounded-md text-center">
               {error || 'Invalid or expired password reset link.'}
             </div>
-            <Link
-              href="/auth/forgot-password"
-              className="w-full flex justify-center items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Request a new reset link
-            </Link>
+            <div className="w-full flex justify-center">
+              <Link
+                href="/auth/forgot-password"
+                className="w-full inline-flex justify-center items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Request a new reset link
+              </Link>
+            </div>
           </div>
         )}
         
@@ -130,12 +136,14 @@ function ResetPasswordForm() {
             <div className="bg-green-50 text-green-700 p-4 rounded-md text-center">
               {success}
             </div>
-            <Link
-              href="/auth/signin"
-              className="w-full flex justify-center items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <FaArrowLeft className="mr-2" /> Sign in
-            </Link>
+            <div className="w-full flex justify-center">
+              <Link
+                href="/auth/signin"
+                className="w-full inline-flex justify-center items-center px-4 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <FaArrowLeft className="mr-2" /> Sign in
+              </Link>
+            </div>
           </div>
         )}
         
@@ -202,12 +210,14 @@ function ResetPasswordForm() {
                 {isLoading ? 'Resetting...' : 'Reset Password'}
               </button>
               
-              <Link
-                href="/auth/signin"
-                className="w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                Cancel
-              </Link>
+              <div className="w-full flex justify-center">
+                <Link
+                  href="/auth/signin"
+                  className="w-full inline-flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Cancel
+                </Link>
+              </div>
             </div>
           </form>
         )}

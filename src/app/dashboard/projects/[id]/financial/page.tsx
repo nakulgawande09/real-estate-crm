@@ -1,7 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { useParams } from 'next/navigation';
+import { use } from 'react';
+import { format } from 'date-fns';
 import Link from 'next/link';
 import {
   FaArrowLeft,
@@ -108,7 +111,8 @@ export default function ProjectFinancialDashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [selectedTimePeriod, setSelectedTimePeriod] = useState('all');
   
-  const params = useParams();
+  const rawParams = useParams();
+  const params = use(rawParams);
   const projectId = params.id as string;
   
   // Financial metrics

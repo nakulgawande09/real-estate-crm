@@ -1,12 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 import { format, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, parseISO, subDays } from 'date-fns';
 import { FaSearch, FaFilter, FaFileDownload, FaSortAmountDown, FaSortAmountUp, FaDollarSign, FaArrowUp, FaArrowDown, FaChartLine, FaExchangeAlt, FaCalendarAlt, FaPercentage, FaMoneyBill } from 'react-icons/fa';
 import Link from 'next/link';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 import { Bar, Pie, Line, Doughnut } from 'react-chartjs-2';
+
+export const runtime = 'edge';
 
 // Register ChartJS components
 ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Title, Tooltip, Legend, Filler);
@@ -41,13 +44,17 @@ interface ChartData {
   }[];
 }
 
-export default function TransactionsPage() {
+function TransactionsContent() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState('last30days');
   const [sortField, setSortField] = useState<'date' | 'amount'>('date');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
@@ -1037,5 +1044,13 @@ export default function TransactionsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TransactionsPage() {
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+      <TransactionsContent />
+    </Suspense>
   );
 } 
